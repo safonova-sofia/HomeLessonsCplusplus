@@ -1,197 +1,316 @@
 ﻿#include <iostream>
-#include <chrono>
-#include <fstream>
-#include <random>
+#include <string>
 
-std::random_device rd;
-std::mt19937 rng(rd());
+// вспомогательные функции
 
-// иницилизируем как глобальные значения, чтобы не привести к переполнению стека
-const int kSize = 1000; // кол-во элементов массива
-long long array[kSize] = {};
-long long arrayQuickSort[kSize] = {};
-long long arrayBubbleSort[kSize] = {};
-long long arrayInsertionSort[kSize] = {};
-
-template <typename T>
-T GetRandomInRange(const T min, const T max)
-{
-    std::uniform_int_distribution<int> uid(min,max);
-    return uid(rng);
-}
-
-template <typename T, typename Arr>
-void FillArray(Arr * array, const T size, const T min, const T max) {
-    for (int i = 0; i < size; i++) {
-        array[i] = GetRandomInRange(min, max);
-    }
-}
-
-template <typename T, typename Arr>
-const void PrintArray(const Arr * array, const T size) {
-    for (int i = 0; i < size; i++)
-        std::cout << array[i] << " ";
-    std::cout << std::endl;
-}
-
-// 1. Quick Sort
-
-template <typename T, typename Arr>
-T Partition(Arr  * array, const T low, const T high) {
-
-    int i = low - 1;
-    int j = high + 1;
-    int pivot = array[low];
-
-    while (true) {
-        do {
-            i++;
-        } while (array[i] < pivot);
-
-        do {
-            j--;
-        } while (array[j] > pivot);
-
-        if (i >= j)
-            return j;
-
-        std::swap(array[i], array[j]);
-    }
-}
-
-template <typename T, typename Arr>
-T PartionRandom(Arr * array, const T low, const T high) {
-    int random = GetRandomInRange(low, high);
-    
-    std::swap(array[random], array[low]);
-
-    return Partition(array, low, high);
-}
-
-template <typename T, typename Arr>
-void QuickSort(Arr * array, const T low, const T high)
-{
-    if (low < high) {
-        int pivot = PartionRandom(array, low, high);
-
-        QuickSort(array, low, pivot);
-        QuickSort(array, pivot + 1, high);
-    }
-}
-
-// 2. Bubble Sort
-
-template <typename T, typename Arr>
-void BubbleSort(Arr * array, const T size) {
-    for (int i = 0; i < size - 1; i++)
-    {
-        for (int j = 0; j < size - i - 1; j++)
-            if (array[j] > array[j + 1])
-            {
-                std::swap(array[j], array[j + 1]);
-            }
-    }
-}
-
-// 3. Insertion Sort
-
-template <typename T, typename Arr>
-void InsertionSort(Arr * array, const T size) {
-    for (int i = 1; i < size; i++)
-    {
-        int tmp = array[i];
-        int q = i - 1;
-
-        while ((q >= 0) && (array[q] > tmp))
-        {
-            array[q + 1] = array[q];
-            q--;
+int findSubString(std::string str, std::string subStr) {
+    int positionStr = 0;
+    while (positionStr < str.size() - (subStr.size() - 1)) {
+        int tmp = 0;
+        while (tmp <= (subStr.size() - 1) && str[positionStr + tmp] == subStr[tmp]) {
+            tmp++;
         }
-        array[q + 1] = tmp;
+        if (tmp == subStr.size()) {
+            return positionStr;
+        }
+        positionStr++;
+    }
+    return -1;
+}
+
+// Task 1
+void numberOfLowercaseAndUppercase() {
+    int countLowercase = 0;
+    int countCapitals = 0;
+    std::string str;
+    
+    std::cout << "Введите строку: " << std::endl;
+    getline(std::cin, str);
+
+    for (int i = 0; i < str.size(); i++) {
+        if (str[i] >= 'a' && str[i] <= 'z')
+        {
+            countLowercase++;
+        };
+
+        if (str[i] >= 'A' && str[i] <= 'Z')
+        {
+            countCapitals++;
+        };
+
+    };
+    std::cout << "Строчные " << countLowercase << std::endl;
+    std::cout << "Прописные " << countCapitals << std::endl; 
+}
+
+// Task 2
+void numberOfWordsInLine() {
+    bool flag = true; // внутри слова
+    int count = 0;
+    std::string str;
+
+    std::cout << "Введите строку: " << std::endl;
+    getline(std::cin, str);
+
+    for (int i = 0; i < str.size(); i++) {
+        if ((('a' <= str[i]) && ('z' >= str[i])) || (('A' <= str[i]) && ('Z' >= str[i])))
+        {
+            if (flag == true)
+            {
+                flag = false;
+                count++;
+
+            }
+        }
+        else if (str[i] = ' ') {
+            flag = true;
+        }
+    };
+
+    std::cout << "Кол-во слов: " << count << std::endl;
+}
+
+// Task 3
+void composeWordsFromLetters() {
+    std::string str;
+    int i = 0;
+    int j = 0;
+    
+
+    std::cout << "Введите строку: " << std::endl;
+    getline(std::cin, str);
+    int ls = str.size();
+
+    for (i = 0; i < 5; i++)
+    {
+        int lw = rand() % (7 - 2 + 1) + 2;
+        std::string w;
+        while (j < lw)
+        {
+            int let = rand() % ls;
+            if (str[let] != ' ')
+            {
+                w += str[let];
+                ++j;
+            }
+        }
+        j = 0;
+
+        std::cout << w << std::endl;
     }
 }
+
+// Task 4
+void removeRepeatedCharacters() {
+    std::string str;
+    std::cout << "Введите строку: " << std::endl;
+    getline(std::cin, str);
+
+    // удаляем пробелы
+    str.erase(remove(str.begin(), str.end(), ' '), str.end());
+
+
+    for (int i = 0; i < str.size(); i++) {
+        while (true) {
+            int j = str.find_last_of(str[i]);
+            if (i < j) {
+                str.erase(j, 1);
+            }
+            else {
+                break;
+            }
+        }
+    }
+       
+    std::cout << str << std::endl; 
+
+}
+
+// Task 5
+void longestStringInArray() {
+    int quantityOfLines = 0;
+    int positionMaxLength = 0;
+
+    std::string str;
+
+    const int AMOUNT = 100;
+    std::string lines[AMOUNT]{};
+
+    // пользователь вводит число вводимых строк
+    std::cout << "Введите кол-во вводимых строк:" << std::endl;
+    std::cin >> quantityOfLines;
+
+    getline(std::cin, str); // "дочитываем" конец строки из потока; возвращает пустую строку
+
+    std::cout << "Введите строку: " << std::endl;
+    for (int i = 0; i < quantityOfLines; i++)
+    {
+        getline(std::cin, lines[i]);
+    }
+
+    std::cout << std::endl;
+
+    // удаляем пробелы
+    std::cout << "№" << " " << "Строка" << " " << "Длина" << std::endl;
+    for (int i = 0; i < quantityOfLines; i++)
+    {
+        lines[i].erase(remove(lines[i].begin(), lines[i].end(), ' '), lines[i].end());
+        std::cout << i << " " << lines[i] << " " << lines[i].size() << std::endl;
+    }
+
+    // ищем максимальную длину
+    for (int i = 1; i < quantityOfLines; i++)
+    {
+        if (lines[i].size() >= lines[positionMaxLength].size()) {
+            positionMaxLength = i;
+        };
+    }
+
+    std::cout << std::endl;
+
+    std::cout << "№" << " " << "Строка" << " " << "Длина" << std::endl;
+    for (int i = 0; i < quantityOfLines; i++)
+    {
+        if (lines[i].size() == lines[positionMaxLength].size()) {
+            std::cout << i << " " << lines[i] << " " << lines[i].size() << std::endl;
+        }
+
+    }
+}
+
+// Task 6
+void isPalindrome() {
+    std::string str;
+    std::cout << "Введите строку: " << std::endl;
+    getline(std::cin, str);
+    bool flag = true;
+
+    // удаляем пробелы
+    str.erase(remove(str.begin(), str.end(), ' '), str.end());
+
+    // проверка на паллиндром
+    for (int i = 0; i < str.size(); i++) {
+        flag = true;
+        {
+            if (str[i] != str[str.size() - i - 1]) {
+                flag = false;    
+            }
+        }
+    }
+    if (flag == false) {
+        std::cout << "Not palindrome" << std::endl;
+    }
+    else {
+        std::cout << "Palindrome" << std::endl;
+    }
+
+    
+}
+
+// Task 7
+void replaceSubString() {
+    int position = -1;
+
+    std::string str;
+    std::string subStr;
+    std::string newStr;
+
+    std::cout << "Введите строку:" << std::endl;
+    getline(std::cin, str);
+    std::cout << "Введите подстроку:" << std::endl;
+    getline(std::cin, subStr);
+    std::cout << "Введите новую строку:" << std::endl;
+    getline(std::cin, newStr);
+
+    // удаление пробелов в строках
+    str.erase(remove(str.begin(), str.end(), ' '), str.end());
+    subStr.erase(remove(subStr.begin(), subStr.end(), ' '), subStr.end());
+    newStr.erase(remove(newStr.begin(), newStr.end(), ' '), newStr.end());
+
+    // найдем индекс с которого начинается подстрока
+    position = findSubString(str, subStr);
+
+    str.erase(position, subStr.size());
+    str.insert(position, newStr);
+
+    std::cout << "Итого: " << str << std::endl;
+}
+
+// Task 8
+void findLongestWord() {
+    int length = 0;
+    int maxLength = -1;
+    int index = -1;
+    std::string str;
+
+    std::cout << "Введите строку: " << std::endl;
+    getline(std::cin, str);
+
+    for (int i = 0; i < str.size(); i++) {
+        if ((('a' <= str[i]) && ('z' >= str[i])) || (('A' <= str[i]) && ('Z' >= str[i])))
+        {
+            length++;
+
+            if (maxLength < length) {
+                maxLength = length;
+                index = i - length + 1;
+            }
+        }
+        else if (str[i] = ' ') {
+            length = 0;
+        }
+    }
+
+    std::cout << "Самое длиноое слово: " << str.substr(index,maxLength) << std::endl;
+    
+}
+
+
 
 int main()
 {
     setlocale(LC_ALL, "RU");
 
-    const int kMinValue = 0;
-    const int kMaxValue = 32767; // макс. значение rand(); используем для ф-ии с равномер. распределением для заполнения массива
+    /*Task 1*/
+    std::cout << "Result of 1 task:" << std::endl;
+    numberOfLowercaseAndUppercase();
+    std::cout << std::endl;
+
     
-    // Заполняем массив
-    FillArray(array, kSize, kMinValue, kMaxValue);
-
-    // Копии массива для сортировок
-    memcpy(arrayQuickSort, array, kSize * sizeof(long long));
-    memcpy(arrayBubbleSort, array, kSize * sizeof(long long));
-    memcpy(arrayInsertionSort, array, kSize * sizeof(long long));
-
-    // Кол-во элементов
-    std::cout << "Кол-во элементов: " << kSize << std::endl;
-
-    // Выводим неупорядоченный массив
-    std::cout << "Первоначальный массив" << std::endl;
-    PrintArray(array, kSize);
-
-    // Поток для записи результатов в файл
-    std::ofstream out("results.txt", std::ios::app);
-
-    // 1. Быстрая сортировка 
-    std::cout << std::endl << "1. Быстрая сортировка" << std::endl;
-
-    auto startTimeQuickSort = std::chrono::steady_clock::now();
-    QuickSort(arrayQuickSort, 0, kSize - 1);
-    auto endTimeQuickSort = std::chrono::steady_clock::now();
-
-    auto runtimeQuickSort = std::chrono::duration<double>(endTimeQuickSort - startTimeQuickSort).count();
-
-    // Быстрая сортировка. Отсортированный массив
+    /*Task 2*/
+    std::cout << "Result of 2 task:" << std::endl;
+    numberOfWordsInLine();
     std::cout << std::endl;
-    std::cout << "Быстрая сортировка. Остсортированный массив" << std::endl;
-    PrintArray(arrayQuickSort, kSize);
-
+    
+    /*Task 3*/
+    std::cout << "Result of 3 task:" << std::endl;
+    composeWordsFromLetters();
     std::cout << std::endl;
-    std::cout << "Быстрая сортировка. RuntimeExecute: " << runtimeQuickSort << " sec" << std::endl;
-    out << runtimeQuickSort << std::endl;
-
-    // 2. Сортировка пузырьком
-    std::cout << std::endl << "2. Сортировка пузырьком" << std::endl;
-
-    auto startTimeBubbleSort = std::chrono::steady_clock::now();
-    BubbleSort(arrayBubbleSort, kSize);
-    auto endTimeBubbleSort = std::chrono::steady_clock::now();
-
-    auto runtimeBubbleSort = std::chrono::duration<double>(endTimeBubbleSort - startTimeBubbleSort).count();
-
-    // Сортировка пузырьком. Отсортированный массив
+    
+    /*Task 4*/
+    std::cout << "Result of 4 task:" << std::endl;
+    removeRepeatedCharacters();
     std::cout << std::endl;
-    std::cout << "Сортировка пузырьком. Остсортированный массив" << std::endl;
-    PrintArray(arrayBubbleSort, kSize);
-
+    
+    /*Task 5*/
+    std::cout << "Result of 5 task:" << std::endl;
+    longestStringInArray();
     std::cout << std::endl;
-    std::cout << "Сортировка пузырьком. RuntimeExecute: " << runtimeBubbleSort << " sec" << std::endl;
-    out << runtimeBubbleSort << std::endl;
-
-    // 3. Сортировка вставкой
-    std::cout << std::endl << "3. Сортировка вставкой" << std::endl;
-
-    auto startTimeInsertionSort = std::chrono::steady_clock::now();
-    InsertionSort(arrayInsertionSort, kSize);
-    auto endTimeInsertionSort = std::chrono::steady_clock::now();
-
-    auto runtimeInsertionSort = std::chrono::duration<double>(endTimeInsertionSort - startTimeInsertionSort).count();
-
-    // Сортировка вставкой. Отсортированный массив
+    
+    /*Task 6*/
+    std::cout << "Result of 6 task:" << std::endl;
+    isPalindrome();
     std::cout << std::endl;
-    std::cout << "Сортировка вставкой. Остсортированный массив" << std::endl;
-    PrintArray(arrayInsertionSort, kSize);
-
+    
+    /*Task 7*/
+    std::cout << "Result of 7 task:" << std::endl;
+    replaceSubString();
     std::cout << std::endl;
-    std::cout << "Сортировка вставкой. RuntimeExecute: " << runtimeInsertionSort << " sec" << std::endl;
-    out << runtimeInsertionSort << std::endl;
-
-    // Закрываем запись в файл
-    out.close();
-
-    return 0;
+    
+    /*Task 8*/
+    std::cout << "Result of 8 task:" << std::endl;
+    findLongestWord();
+    std::cout << std::endl;
 }
+
+
